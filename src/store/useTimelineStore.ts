@@ -14,6 +14,11 @@ interface TimelineState {
   expandedEventId: string | null;
   isFiltersPanelOpen: boolean;
   
+  // Asset History Modal State
+  isAssetHistoryModalOpen: boolean;
+  assetHistoryDomain: string | null;
+  assetHistoryPath: string | null;
+  
   // Actions
   setDomain: (domain: string) => void;
   setSeverity: (severity: Severity | null) => void;
@@ -23,15 +28,20 @@ interface TimelineState {
   collapseAllEvents: () => void;
   toggleFiltersPanel: () => void;
   resetFilters: () => void;
+  openAssetHistoryModal: (domain: string, path: string) => void;
+  closeAssetHistoryModal: () => void;
 }
 
 export const useTimelineStore = create<TimelineState>((set) => ({
-  domain: 'example.com',
+  domain: '',
   selectedSeverity: null,
   selectedAssetType: null,
   dateRange: { from: null, to: null },
   expandedEventId: null,
   isFiltersPanelOpen: true,
+  isAssetHistoryModalOpen: false,
+  assetHistoryDomain: null,
+  assetHistoryPath: null,
 
   setDomain: (domain) => set({ domain }),
   setSeverity: (severity) => set({ selectedSeverity: severity }),
@@ -48,5 +58,15 @@ export const useTimelineStore = create<TimelineState>((set) => ({
     selectedSeverity: null,
     selectedAssetType: null,
     dateRange: { from: null, to: null },
+  }),
+  openAssetHistoryModal: (domain, path) => set({ 
+    isAssetHistoryModalOpen: true, 
+    assetHistoryDomain: domain, 
+    assetHistoryPath: path 
+  }),
+  closeAssetHistoryModal: () => set({ 
+    isAssetHistoryModalOpen: false, 
+    assetHistoryDomain: null, 
+    assetHistoryPath: null 
   }),
 }));

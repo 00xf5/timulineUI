@@ -29,6 +29,7 @@ async function fetchInternal<T>(
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
+      'x-api-key': import.meta.env.VITE_DRIFT_API_KEY || '',
     },
   });
 
@@ -49,11 +50,17 @@ export interface TimelineFiltersParams {
   cursor?: string;
 }
 
-export const getTimeline = (domain: string, filters: TimelineFiltersParams = {}) => 
+export const getTimeline = async (
+  domain?: string,
+  filters?: TimelineFiltersParams
+): Promise<TimelineResponse> => 
   fetchInternal<TimelineResponse>('/api/drift/timeline', { domain, ...filters });
 
 export const getStats = (domain: string, days: number = 30) => 
   fetchInternal<DriftStatsResponse>('/api/drift/stats', { domain, days });
+
+export const getGlobalStats = (days: number = 30) => 
+  fetchInternal<DriftStatsResponse>('/api/drift/stats', { days });
 
 export const getAssetHistory = (domain: string, path: string, days: number = 30) =>
   fetchInternal<AssetHistoryResponse>('/api/drift/asset-history', { domain, path, days });

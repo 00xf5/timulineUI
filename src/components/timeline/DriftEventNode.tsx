@@ -4,12 +4,14 @@ import type { TimelineEvent } from '@/lib/types';
 import { SeverityBadge, SeverityDot } from './SeverityBadge';
 import { AssetTypeBadge } from './AssetTypeBadge';
 import { DiffViewer } from './DiffViewer';
+import { useTimelineStore } from '@/store/useTimelineStore';
 import { 
   ChevronRight, 
   Clock, 
   FileCode, 
   Shield, 
-  Gauge 
+  Gauge,
+  History
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -39,7 +41,15 @@ export function DriftEventNode({
   onToggle,
   isLast = false 
 }: DriftEventNodeProps) {
+  const { domain, openAssetHistoryModal } = useTimelineStore();
   const timestamp = new Date(event.timestamp);
+  
+  const handleOpenHistory = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (domain) {
+      openAssetHistoryModal(domain, event.path);
+    }
+  };
   
   return (
     <div className="relative pl-10">
@@ -96,11 +106,21 @@ export function DriftEventNode({
               {event.summary}
             </h3>
             
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="font-mono truncate max-w-[200px]" title={event.path}>
-                {event.path}
-              </span>
-              <AssetTypeBadge type={event.asset_type} showLabel={false} />
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="font-mono truncate max-w-[200px]" title={event.path}>
+                  {event.path}
+                </span>
+                <AssetTypeBadge type={event.asset_type} showLabel={false} />
+              </div>
+              <button
+                onClick={handleOpenHistory}
+                className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                title="View full asset history"
+              >
+                <History className="h-3 w-3" />
+                <span>History</span>
+              </button>
             </div>
           </div>
 
